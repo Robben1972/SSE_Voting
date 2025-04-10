@@ -6,13 +6,14 @@ export default function Home() {
   const [votes, setVotes] = useState();
   useEffect(() => {
     const fetchVotes = async() => {
-      const {data} = await axios.get('http://localhost:4000/votes')
+      const {data} = await axios.get('http://localhost:8000/votes')
       setVotes(data)
     }
-    const eventSource = new EventSource("http://localhost:4000/events")
+    const eventSource = new EventSource("http://localhost:8000/events")
 
-    eventSource.onmessage = ({data}) => {
-      setVotes(JSON.parse(data))
+    eventSource.onmessage = ({data}) => { 
+      const formattedData = data.replace(/'/g, '"');
+      setVotes(JSON.parse(formattedData));
     }
     fetchVotes()
   }, [])
@@ -20,8 +21,7 @@ export default function Home() {
 
 
   const voteHandler = async (candidate: string) => {
-    const res  = await axios.post("http://localhost:4000/vote", {candidate})
-    console.log(res);
+    const res  = await axios.post("http://localhost:8000/vote", {candidate})
   }
 
   return (
